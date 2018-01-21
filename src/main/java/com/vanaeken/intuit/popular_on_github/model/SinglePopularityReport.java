@@ -12,4 +12,9 @@ public class SinglePopularityReport {
 		this.popularityRecord = popularityRecord;
 	}
 
+	public void consolidate(SinglePopularityReport otherReport) {
+		this.popularityRecord.consolidate(otherReport.getPopularityRecord());
+
+	}
+
 }

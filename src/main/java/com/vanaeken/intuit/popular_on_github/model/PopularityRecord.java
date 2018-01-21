@@ -10,6 +10,14 @@ public class PopularityRecord implements Comparable<PopularityRecord> {
 		return Double.compare(this.popularity, other.popularity);
 	}
 
+	public PopularityRecord() {
+	}
+
+	public PopularityRecord(RepositoryId repositoryId, double popularity) {
+		this.repositoryId = repositoryId;
+		this.popularity = popularity;
+	}
+
 	public RepositoryId getRepositoryId() {
 		return repositoryId;
 	}
@@ -24,6 +32,10 @@ public class PopularityRecord implements Comparable<PopularityRecord> {
 
 	public void setPopularity(double popularity) {
 		this.popularity = popularity;
+	}
+
+	public void consolidate(PopularityRecord otherRecord) {
+		this.popularity += otherRecord.popularity;
 	}
 
 }

@@ -18,7 +18,7 @@ import com.vanaeken.intuit.popular_on_github.model.RepositoryId;
 import com.vanaeken.intuit.popular_on_github.model.SinglePopularityReport;
 import com.vanaeken.intuit.popular_on_github.model.SinglePopularityRequest;
 
-@Service("popularityCalculator")
+@Service("primaryPopularityCalculator")
 public class GitHubPopularityCalculator implements PopularityCalculator {
 
 	private static final String GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
@@ -38,50 +38,57 @@ public class GitHubPopularityCalculator implements PopularityCalculator {
 
 	@Override
 	public SinglePopularityReport calculatePopularity(SinglePopularityRequest request) {
-		GraphQLQuery query = GraphQLQuery.getQueryForStarGazersCount(request.getRespositoryId());
+		try {
+			GraphQLQuery query = GraphQLQuery.getQueryForStarGazersCount(request.getRespositoryId());
 
-		String responseAsText = restTemplate.postForObject(GITHUB_GRAPHQL_URL, query, String.class);
-		String name = JsonPath.parse(responseAsText).read("$['data']['repository']['name']");
-		if (!name.equals(request.getRespositoryId().getRepositoryName())) {
-			throw new RuntimeException("Unexpected repository name returned by GitHub.");
+			String responseAsText = restTemplate.postForObject(GITHUB_GRAPHQL_URL, query, String.class);
+			String name = JsonPath.parse(responseAsText).read("$['data']['repository']['name']");
+			if (!name.equals(request.getRespositoryId().getName())) {
+				throw new RuntimeException("Unexpected repository name returned by GitHub.");
+			}
+
+			SinglePopularityReport report = new SinglePopularityReport();
+
+			int stargazersCount = JsonPath.parse(responseAsText)
+					.read("$['data']['repository']['stargazers']['totalCount']");
+			PopularityRecord record = new PopularityRecord();
+			record.setRepositoryId(request.getRespositoryId());
+			record.setPopularity((double) stargazersCount);
+			report.setPopularityRecord(record);
+
+			return report;
+		} catch (Exception ex) {
+			throw new PopularityCalculatorException("Something went wrong.");
 		}
 
-		int stargazersCount = JsonPath.parse(responseAsText)
-				.read("$['data']['repository']['stargazers']['totalCount']");
-
-		PopularityRecord record = new PopularityRecord();
-		record.setRepositoryId(request.getRespositoryId());
-		record.setPopularity((double) stargazersCount);
-		SinglePopularityReport report = new SinglePopularityReport();
-		report.setPopularityRecord(record);
-
-		return report;
 	}
 
 	@Override
 	public MultiplePopularityReport calculatePopularity(MultiplePopularityRequest request) {
-		GraphQLQuery query = GraphQLQuery.getQueryForStarGazersCount(request.getRespositoryIds());
+		try {
+			GraphQLQuery query = GraphQLQuery.getQueryForStarGazersCount(request.getRespositoryIds());
 
-		String responseAsText = restTemplate.postForObject(GITHUB_GRAPHQL_URL, query, String.class);
+			String responseAsText = restTemplate.postForObject(GITHUB_GRAPHQL_URL, query, String.class);
 
-		List<Integer> stargazersCounts = JsonPath.parse(responseAsText)
-				.read("$['data'][*]['stargazers']['totalCount']");
-		Iterator<Integer> counts = stargazersCounts.iterator();
+			List<Integer> stargazersCounts = JsonPath.parse(responseAsText)
+					.read("$['data'][*]['stargazers']['totalCount']");
+			Iterator<Integer> counts = stargazersCounts.iterator();
 
-		List<PopularityRecord> records = new ArrayList<>();
-		for (RepositoryId id : request.getRespositoryIds()) {
-			PopularityRecord record = new PopularityRecord();
-			record.setRepositoryId(id);
-			record.setPopularity((double) counts.next());
-			records.add(record);
+			List<PopularityRecord> records = new ArrayList<>();
+			for (RepositoryId id : request.getRespositoryIds()) {
+				PopularityRecord record = new PopularityRecord(id, (double) counts.next());
+				records.add(record);
+			}
+
+			records.sort(null);
+
+			MultiplePopularityReport report = new MultiplePopularityReport();
+			report.setPopularityRecords(records);
+
+			return report;
+		} catch (Exception ex) {
+			throw new PopularityCalculatorException("Something went wrong.");
 		}
-
-		records.sort(null);
-
-		MultiplePopularityReport report = new MultiplePopularityReport();
-		report.setPopularityRecords(records);
-
-		return report;
 	}
 
 }

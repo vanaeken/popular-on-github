@@ -37,41 +37,47 @@ public class GooglePopularityCalculator implements PopularityCalculator {
 
 	@Override
 	public SinglePopularityReport calculatePopularity(SinglePopularityRequest request) {
-		double totalResults = getTotalResults(request.getRespositoryId());
+		try {
+			double totalResults = getTotalResults(request.getRespositoryId());
 
-		PopularityRecord record = new PopularityRecord();
-		record.setRepositoryId(request.getRespositoryId());
-		record.setPopularity(totalResults);
-		SinglePopularityReport report = new SinglePopularityReport();
-		report.setPopularityRecord(record);
+			PopularityRecord record = new PopularityRecord(request.getRespositoryId(), totalResults);
+			SinglePopularityReport report = new SinglePopularityReport();
+			report.setPopularityRecord(record);
 
-		return report;
+			return report;
+		} catch (Exception ex) {
+			throw new PopularityCalculatorException("Something went wrong.");
+		}
 	}
 
 	@Override
 	public MultiplePopularityReport calculatePopularity(MultiplePopularityRequest request) {
-		List<PopularityRecord> records = new ArrayList<>();
+		try {
+			List<PopularityRecord> records = new ArrayList<>();
 
-		for (RepositoryId id : request.getRespositoryIds()) {
-			double totalResults = getTotalResults(id);
+			for (RepositoryId id : request.getRespositoryIds()) {
+				double totalResults = getTotalResults(id);
 
-			PopularityRecord record = new PopularityRecord();
-			record.setRepositoryId(id);
-			record.setPopularity(totalResults);
+				PopularityRecord record = new PopularityRecord(id, totalResults);
 
-			records.add(record);
+				records.add(record);
+			}
+
+			records.sort(null);
+
+			MultiplePopularityReport report = new MultiplePopularityReport();
+			report.setPopularityRecords(records);
+
+			return report;
+		} catch (Exception ex) {
+			throw new PopularityCalculatorException("Something went wrong.");
 		}
-
-		records.sort(null);
-
-		MultiplePopularityReport report = new MultiplePopularityReport();
-		report.setPopularityRecords(records);
-
-		return report;
 	}
 
 	private double getTotalResults(RepositoryId id) {
-		String queryString = "\"https://github.com/" + id.getOwner() + "/" + id.getName() + ".git\"";
+		// String queryString = "\"https://github.com/" + id.getOwner() + "/" +
+		// id.getName() + ".git\"";
+		String queryString = "\"git@github.com:" + id.getOwner() + "/" + id.getName() + ".git\"";
 		String finalUrl = String.format(this.url, queryString);
 
 		String responseAsText = restTemplate.getForObject(finalUrl, String.class);

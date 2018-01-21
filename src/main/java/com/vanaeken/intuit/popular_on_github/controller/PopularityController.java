@@ -22,17 +22,38 @@ import com.vanaeken.intuit.popular_on_github.service.PopularityCalculatorExcepti
 public class PopularityController {
 
 	@Autowired
-	private PopularityCalculator popularityCalculator;
+	private PopularityCalculator primaryPopularityCalculator;
+
+	@Autowired
+	private PopularityCalculator secondaryPopularityCalculator;
 
 	@RequestMapping(value = "/singlePopularityReports", method = RequestMethod.POST)
 	public @ResponseBody SinglePopularityReport calculate(@RequestBody SinglePopularityRequest request) {
-		SinglePopularityReport report = popularityCalculator.calculatePopularity(request);
+
+		SinglePopularityReport report = primaryPopularityCalculator.calculatePopularity(request);
+
+		try {
+			SinglePopularityReport secondaryReport = secondaryPopularityCalculator.calculatePopularity(request);
+			report.consolidate(secondaryReport);
+		} catch (Exception ex) {
+			// report this
+		}
+
 		return report;
 	}
 
 	@RequestMapping(value = "/multiplePopularityReports", method = RequestMethod.POST)
 	public @ResponseBody MultiplePopularityReport calculate(@RequestBody MultiplePopularityRequest request) {
-		MultiplePopularityReport report = popularityCalculator.calculatePopularity(request);
+
+		MultiplePopularityReport report = primaryPopularityCalculator.calculatePopularity(request);
+
+		try {
+			MultiplePopularityReport secondaryReport = secondaryPopularityCalculator.calculatePopularity(request);
+			report.consolidate(secondaryReport);
+		} catch (Exception ex) {
+			// report this
+		}
+
 		return report;
 	}
 
@@ -40,6 +61,6 @@ public class PopularityController {
 	public ResponseEntity<ExceptionResponse> somethingWentWrong(PopularityCalculatorException ex) {
 		ExceptionResponse response = new ExceptionResponse(ex.getMessage());
 
-		return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

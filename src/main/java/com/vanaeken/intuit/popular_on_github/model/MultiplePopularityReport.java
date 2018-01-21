@@ -14,4 +14,10 @@ public class MultiplePopularityReport {
 		this.popularityRecords = popularityRecords;
 	}
 
+	public void consolidate(MultiplePopularityReport otherReport) {
+		for (int iRecord = 0; iRecord < this.popularityRecords.size(); iRecord++) {
+			this.popularityRecords.get(iRecord).consolidate(otherReport.getPopularityRecords().get(iRecord));
+		}
+	}
+
 }

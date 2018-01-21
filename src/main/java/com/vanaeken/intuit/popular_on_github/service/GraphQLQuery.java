@@ -10,9 +10,6 @@ public class GraphQLQuery {
 
 	private String query;
 
-	public GraphQLQuery() {
-	}
-
 	public GraphQLQuery(String query) {
 		this.query = query;
 	}
@@ -21,14 +18,10 @@ public class GraphQLQuery {
 		return query;
 	}
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
 	public static GraphQLQuery getQueryForStarGazersCount(RepositoryId repositoryId) {
 		String query = String.format(
 				"query { repository(owner: \"%s\", name: \"%s\") { owner name stargazers { totalCount } } }",
-				repositoryId.getRepositoryOwner(), repositoryId.getRepositoryName());
+				repositoryId.getOwner(), repositoryId.getName());
 		return new GraphQLQuery(query);
 	}
 
@@ -40,7 +33,7 @@ public class GraphQLQuery {
 		int iRepo = 0;
 		for (RepositoryId repositoryId : repositoryIds) {
 			String subQuery = String.format("r%d: repository(owner: \"%s\", name: \"%s\") { ...repository } ", iRepo,
-					repositoryId.getRepositoryOwner(), repositoryId.getRepositoryName());
+					repositoryId.getOwner(), repositoryId.getName());
 			subQueries += subQuery;
 			iRepo++;
 		}

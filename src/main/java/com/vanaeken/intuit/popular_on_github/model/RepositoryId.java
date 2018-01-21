@@ -2,22 +2,32 @@ package com.vanaeken.intuit.popular_on_github.model;
 
 public class RepositoryId {
 
-	private String repositoryOwner;
-	private String repositoryName;
+	private String owner;
+	private String name;
 
-	public String getRepositoryOwner() {
-		return repositoryOwner;
+	public RepositoryId() {
 	}
 
-	public void setRepositoryOwner(String repositoryOwner) {
-		this.repositoryOwner = repositoryOwner;
+	public RepositoryId(String owner, String name) {
+		super();
+		this.owner = owner;
+		this.name = name;
 	}
 
-	public String getRepositoryName() {
-		return repositoryName;
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setRepositoryName(String repositoryName) {
-		this.repositoryName = repositoryName;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

@@ -19,13 +19,13 @@ public class GooglePopularityCalculatorTests extends PopularityCalculatorTests {
 
 	@Test
 	public void testSingle2() {
-		testSingle("bitcoin", "bitcoin", 2.0);
+		testSingle("bitcoin", "bitcoin", 9.0);
 	}
 
 	@Test
 	public void testMultipleInRightOrder() {
 		RepositoryId[] ids = { new RepositoryId("exercism", "python"), new RepositoryId("bitcoin", "bitcoin") };
-		ExpectedResult[] expectedResults = { new ExpectedResult("python", 0.0), new ExpectedResult("bitcoin", 2.0) };
+		ExpectedResult[] expectedResults = { new ExpectedResult("python", 0.0), new ExpectedResult("bitcoin", 9.0) };
 
 		testMultiple(ids, expectedResults);
 	}
@@ -33,7 +33,7 @@ public class GooglePopularityCalculatorTests extends PopularityCalculatorTests {
 	@Test
 	public void testMultipleInWrongOrder() {
 		RepositoryId[] ids = { new RepositoryId("bitcoin", "bitcoin"), new RepositoryId("exercism", "python") };
-		ExpectedResult[] expectedResults = { new ExpectedResult("python", 0.0), new ExpectedResult("bitcoin", 2.0) };
+		ExpectedResult[] expectedResults = { new ExpectedResult("python", 0.0), new ExpectedResult("bitcoin", 9.0) };
 
 		testMultiple(ids, expectedResults);
 	}
