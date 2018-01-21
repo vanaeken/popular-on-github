@@ -18,7 +18,7 @@ import com.vanaeken.intuit.popular_on_github.model.SinglePopularityRequest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ApplicationIntegrationTests {
+public class ApplicationTests {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
@@ -31,8 +31,8 @@ public class ApplicationIntegrationTests {
 		String url = "http://localhost:" + port + "/singlePopularityReports";
 
 		RepositoryId id = new RepositoryId();
-		id.setRepositoryOwner("bitcoin");
-		id.setRepositoryName("bitcoin");
+		id.setOwner("bitcoin");
+		id.setName("bitcoin");
 
 		SinglePopularityRequest request = new SinglePopularityRequest();
 		request.setRespositoryId(id);

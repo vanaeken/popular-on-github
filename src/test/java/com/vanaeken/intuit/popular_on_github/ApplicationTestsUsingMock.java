@@ -27,7 +27,7 @@ import com.vanaeken.intuit.popular_on_github.model.SinglePopularityRequest;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ApplicationUnitTests {
+public class ApplicationTestsUsingMock {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -38,8 +38,8 @@ public class ApplicationUnitTests {
 	@Test
 	public void testSingleReport() throws Exception {
 		RepositoryId id = new RepositoryId();
-		id.setRepositoryOwner("bitcoin");
-		id.setRepositoryName("bitcoin");
+		id.setOwner("bitcoin");
+		id.setName("bitcoin");
 
 		SinglePopularityRequest request = new SinglePopularityRequest();
 		request.setRespositoryId(id);
@@ -47,7 +47,7 @@ public class ApplicationUnitTests {
 
 		mockMvc.perform(post("/singlePopularityReports").contentType(MediaType.APPLICATION_JSON).content(json)
 				.accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.popularityRecord.repositoryId.repositoryName", equalTo("bitcoin")))
+				.andExpect(jsonPath("$.popularityRecord.repositoryId.name", equalTo("bitcoin")))
 				.andExpect(jsonPath("$.popularityRecord.popularity", closeTo(26000.0, 10000.0)));
 	}
 
@@ -55,12 +55,12 @@ public class ApplicationUnitTests {
 	public void testMultipleReportInWrongOrder() throws Exception {
 		List<RepositoryId> ids = new ArrayList<>();
 		RepositoryId id0 = new RepositoryId();
-		id0.setRepositoryOwner("bitcoin");
-		id0.setRepositoryName("bitcoin");
+		id0.setOwner("bitcoin");
+		id0.setName("bitcoin");
 		ids.add(id0);
 		RepositoryId id1 = new RepositoryId();
-		id1.setRepositoryOwner("exercism");
-		id1.setRepositoryName("python");
+		id1.setOwner("exercism");
+		id1.setName("python");
 		ids.add(id1);
 
 		MultiplePopularityRequest request = new MultiplePopularityRequest();
@@ -70,9 +70,9 @@ public class ApplicationUnitTests {
 
 		mockMvc.perform(post("/multiplePopularityReports").contentType(MediaType.APPLICATION_JSON).content(json)
 				.accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.popularityRecords[0].repositoryId.repositoryName", equalTo("python")))
+				.andExpect(jsonPath("$.popularityRecords[0].repositoryId.name", equalTo("python")))
 				.andExpect(jsonPath("$.popularityRecords[0].popularity", closeTo(290.0, 100.0)))
-				.andExpect(jsonPath("$.popularityRecords[1].repositoryId.repositoryName", equalTo("bitcoin")))
+				.andExpect(jsonPath("$.popularityRecords[1].repositoryId.name", equalTo("bitcoin")))
 				.andExpect(jsonPath("$.popularityRecords[1].popularity", closeTo(26_000.0, 1000.0)));
 	}
 
