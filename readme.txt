@@ -26,7 +26,11 @@ Are we focusing on use (# clones), or contributions (# committers, etc.), or sti
 
 The behavior of Google Custom Search is not very clear. We need to understand the service better.
 
-In general, is Google Custom Search a good choice for a secondary popularity source?
+In general, we need to evaluate if Google Custom Search is a good choice for a secondary popularity source.
+
+Error handling, and messaging, needs to be extended.
+
+In general, we must make the application more robust.
 
 We need to parallelize outgoing calls as much as possible.
 
