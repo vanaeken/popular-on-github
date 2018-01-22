@@ -18,41 +18,28 @@ import com.vanaeken.intuit.popular_on_github.model.SinglePopularityRequest;
 import com.vanaeken.intuit.popular_on_github.service.PopularityCalculator;
 import com.vanaeken.intuit.popular_on_github.service.PopularityCalculatorException;
 
+import io.swagger.annotations.ApiOperation;
+
 @Controller
 public class PopularityController {
 
 	@Autowired
-	private PopularityCalculator primaryPopularityCalculator;
+	private PopularityCalculator consolidatingPopularityCalculator;
 
-	@Autowired
-	private PopularityCalculator secondaryPopularityCalculator;
-
+	@ApiOperation(value = "Returns the popularity of a GitHub repository")
 	@RequestMapping(value = "/singlePopularityReports", method = RequestMethod.POST)
 	public @ResponseBody SinglePopularityReport calculate(@RequestBody SinglePopularityRequest request) {
 
-		SinglePopularityReport report = primaryPopularityCalculator.calculatePopularity(request);
-
-		try {
-			SinglePopularityReport secondaryReport = secondaryPopularityCalculator.calculatePopularity(request);
-			report.consolidate(secondaryReport);
-		} catch (Exception ex) {
-			// report this
-		}
+		SinglePopularityReport report = consolidatingPopularityCalculator.calculatePopularity(request);
 
 		return report;
 	}
 
+	@ApiOperation(value = "Returns the popularity of a list GitHub repositories", notes = "The returned list is ordered from less popular to more popular")
 	@RequestMapping(value = "/multiplePopularityReports", method = RequestMethod.POST)
 	public @ResponseBody MultiplePopularityReport calculate(@RequestBody MultiplePopularityRequest request) {
 
-		MultiplePopularityReport report = primaryPopularityCalculator.calculatePopularity(request);
-
-		try {
-			MultiplePopularityReport secondaryReport = secondaryPopularityCalculator.calculatePopularity(request);
-			report.consolidate(secondaryReport);
-		} catch (Exception ex) {
-			// report this
-		}
+		MultiplePopularityReport report = consolidatingPopularityCalculator.calculatePopularity(request);
 
 		return report;
 	}

@@ -12,6 +12,8 @@ import com.vanaeken.intuit.popular_on_github.model.SinglePopularityRequest;
 
 public abstract class PopularityCalculatorTests {
 
+	private static final double TOLERANCE = 100000.0;
+
 	protected PopularityCalculator calculator;
 
 	protected void testSingle(String owner, String name, double expectedPopularity) {
@@ -24,7 +26,7 @@ public abstract class PopularityCalculatorTests {
 
 		SinglePopularityReport report = this.calculator.calculatePopularity(request);
 		assertEquals(name, report.getPopularityRecord().getRepositoryId().getName());
-		assertEquals(expectedPopularity, report.getPopularityRecord().getPopularity(), expectedPopularity / 10.0);
+		assertEquals(expectedPopularity, report.getPopularityRecord().getPopularity(), TOLERANCE);
 	}
 
 	protected void testMultiple(RepositoryId[] ids, ExpectedResult[] expectedResults) {
@@ -37,8 +39,7 @@ public abstract class PopularityCalculatorTests {
 			assertEquals(expectedResults[iRepo].getName(),
 					report.getPopularityRecords().get(iRepo).getRepositoryId().getName());
 			assertEquals(expectedResults[iRepo].getPopularity(),
-					report.getPopularityRecords().get(iRepo).getPopularity(),
-					expectedResults[iRepo].getPopularity() / 10.0);
+					report.getPopularityRecords().get(iRepo).getPopularity(), TOLERANCE);
 		}
 	}
 }

@@ -75,8 +75,6 @@ public class GooglePopularityCalculator implements PopularityCalculator {
 	}
 
 	private double getTotalResults(RepositoryId id) {
-		// String queryString = "\"https://github.com/" + id.getOwner() + "/" +
-		// id.getName() + ".git\"";
 		String queryString = "\"git@github.com:" + id.getOwner() + "/" + id.getName() + ".git\"";
 		String finalUrl = String.format(this.url, queryString);
 
