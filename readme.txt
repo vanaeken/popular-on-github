@@ -42,6 +42,8 @@ We need to parallelize outgoing calls as much as possible.
 
 In general, we need to load-test, profile and performance-optimize the application.
 
+Metrics on e.g. the outgoing cqlls need to be continuously collected.
+
 If requirements allow, we might want to use caching.
 
 Secrets need to dealt with properly, e.g. by using a vault.
@@ -50,6 +52,8 @@ Test coverage can still be improved a bit.
 
 We need to make integration testing more robust.
 We probably want to create our own test data (repositories) on GitHub.
+
+We want to add logging.
 
 Documentation can still be improved.
 
