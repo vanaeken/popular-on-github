@@ -10,6 +10,16 @@ POPULARITY
 
 Popularity is calculated by adding the number of GitHub stars and the number of git@github.com/{owner}/{name}.git references on the Web.
 
+SECRETS
+
+For the application to be tested and run properly, the file src/main/resources/secrets.properties must exist.
+The file must contain the necessary secrets, and use the template below. The file in not under source control.
+
+github_username={s1}
+github_token={s2}
+google_search_engine_id={s3}
+google_key={s4}
+
 BUILDING, TESTING, RUNNING, EXPERIMENTING
 
 mvn package
